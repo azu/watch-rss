@@ -7,11 +7,17 @@ import { fetchAllWatching } from "./watch-rss";
 import pAll from "p-all";
 
 const DEBUG = Boolean(process.env.DEBUG);
-const log = (...args: any[]) => {
+const debug = (...args: any[]) => {
     if (!DEBUG) {
         return;
     }
     console.log("[watch-rss]", ...args);
+};
+const info = (...args: any[]) => {
+    if (!DEBUG) {
+        return;
+    }
+    console.info("[watch-rss]", ...args);
 };
 const createInoreaderAPI = async (accessToken: AccessToken) => {
     const fetchSubscriptions = (): Promise<{ subscriptions: { url: string }[] }> => {
@@ -23,10 +29,10 @@ const createInoreaderAPI = async (accessToken: AccessToken) => {
     };
     const subscriptions = await fetchSubscriptions();
     const subscriptionFeedURLSet = new Set(subscriptions.subscriptions.map((subscription) => subscription.url));
-    log("Subscription size", subscriptionFeedURLSet.size);
+    debug("Subscription size", subscriptionFeedURLSet.size);
     const addSubscription = async (url: string, folder: string) => {
         if (subscriptionFeedURLSet.has(url)) {
-            log("Already subscribe: " + url);
+            debug("Already subscribe: " + url);
             return;
         }
         // https://www.inoreader.com/developers/add-subscription
@@ -49,7 +55,7 @@ const createInoreaderAPI = async (accessToken: AccessToken) => {
                 "Content-Type": "application/json"
             }
         }).then((res) => res.text());
-        log("Subscribe: " + url);
+        debug("Subscribe: " + url);
     };
     return {
         addSubscription: addSubscription
@@ -109,11 +115,12 @@ async function run() {
         }
     }
     // GitHub
-    log("fetch watching...");
+    info("fetch watching...");
     const releaseFeedList = await fetchAllWatching({
         ENABLE_CACHE: Boolean(process.env.ENABLE_CACHE), // IT IS LOCAL OPTION
         GITHUB_TOKEN: GITHUB_TOKEN
     });
+    info(`feted feed count: ${releaseFeedList.length}`);
     const inoreaderClient = await createInoreaderAPI(accessToken);
     const actions = releaseFeedList
         .filter((releaseNoteFeedURL) => {
@@ -121,9 +128,9 @@ async function run() {
                 return releaseNoteFeedURL.includes(excludePattern);
             });
             if (skipped) {
-                log("Skip: ", releaseNoteFeedURL);
+                debug("Skip: ", releaseNoteFeedURL);
             } else {
-                log("ok: ", releaseNoteFeedURL);
+                debug("ok: ", releaseNoteFeedURL);
             }
             return skipped;
         })
@@ -132,11 +139,12 @@ async function run() {
                 return inoreaderClient.addSubscription(releaseNoteFeedURL, FOLDER_NAME);
             };
         });
+    info(`To subscribe feed count: ${actions.length}`);
     await pAll(actions, {
         concurrency: 8,
         stopOnError: false
     });
-    log("Completed");
+    info("Completed");
 }
 
 if (require.main === module) {
