@@ -6,7 +6,11 @@ import { stringify } from "querystring";
 import { fetchAllWatching } from "./watch-rss";
 import pAll from "p-all";
 
+const DEBUG = Boolean(process.env.DEBUG);
 const log = (...args: any[]) => {
+    if (!DEBUG) {
+        return;
+    }
     console.log("[watch-rss]", ...args);
 };
 const createInoreaderAPI = async (accessToken: AccessToken) => {
@@ -57,14 +61,21 @@ const createInoreaderAPI = async (accessToken: AccessToken) => {
  *  INOREADER_TOKEN_JSON=${{secrets.INOREADER_TOKEN_JSON}}
  *  GITHUB_TOKEN=<Personal Access Token> (repo,public_key,workflow,users)
  *  GITHUB_REPOSITORY=azu/watch-rss
+ *
  * ENV(optional):
+ *  EXCLUDE_PATTERNS="ignore-owner/,ignore-word" # ignore patterns that are comma separated
  *  INOREADER_FOLDER_NAME=folder name
+ *  DEBUG=1
  */
 async function run() {
     const FOLDER_NAME = process.env.INOREADER_FOLDER_NAME ?? "GitHubReleases";
     if (!FOLDER_NAME) {
         throw new Error("require INOREADER_FOLDER_NAME env");
     }
+    const EXCLUDE_PATTERNS = process.env.EXCLUDE_PATTERNS ?? "";
+    const excludePatterns = EXCLUDE_PATTERNS.split(",").map((exclude) => {
+        return exclude.trim();
+    });
     const INOREADER_TOKEN_JSON = process.env.INOREADER_TOKEN_JSON;
     if (!INOREADER_TOKEN_JSON) {
         throw new Error("require INOREADER_TOKEN_JSON env");
@@ -94,7 +105,7 @@ async function run() {
                 value: JSON.stringify(accessToken.token)
             });
         } catch (error) {
-            console.log("Error refreshing access token: ", error.message);
+            console.error("Error refreshing access token: ", error.message);
         }
     }
     // GitHub
@@ -103,11 +114,17 @@ async function run() {
         GITHUB_TOKEN: GITHUB_TOKEN
     });
     const inoreaderClient = await createInoreaderAPI(accessToken);
-    const actions = releaseFeedList.map((releaseNoteFeedURL) => {
-        return () => {
-            return inoreaderClient.addSubscription(releaseNoteFeedURL, FOLDER_NAME);
-        };
-    });
+    const actions = releaseFeedList
+        .filter((releaseNoteFeedURL) => {
+            return excludePatterns.some((excludePattern) => {
+                return releaseNoteFeedURL.includes(excludePattern);
+            });
+        })
+        .map((releaseNoteFeedURL) => {
+            return () => {
+                return inoreaderClient.addSubscription(releaseNoteFeedURL, FOLDER_NAME);
+            };
+        });
     await pAll(actions, {
         concurrency: 8,
         stopOnError: false

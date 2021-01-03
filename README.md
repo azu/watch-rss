@@ -1,12 +1,10 @@
 # watch-rss
 
-Aggregate your watched GitHub Repository&#39;s releases as RSS feeds.
+Subscribe your watched GitHub repository's releases as RSS on [Inoreader](https://inoreader.com).
 
-## Install
+This repository use GitHub Actions as scheduled cron.
 
-Install with [npm](https://www.npmjs.com/):
-
-    npm install watch-rss
+You can subscribe new watched repository's releases every day 00:00.
 
 ## Usage
 
