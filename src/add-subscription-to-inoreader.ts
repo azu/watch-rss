@@ -55,7 +55,7 @@ const createInoreaderAPI = async (accessToken: AccessToken) => {
 /**
  * ENV:
  *  INOREADER_TOKEN_JSON=${{secrets.INOREADER_TOKEN_JSON}}
- *  GITHUB_TOKEN=<Personal Access Token>
+ *  GITHUB_TOKEN=<Personal Access Token> (repo,public_key,workflow,users)
  *  GITHUB_REPOSITORY=azu/watch-rss
  * ENV(optional):
  *  INOREADER_FOLDER_NAME=folder name
