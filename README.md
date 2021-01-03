@@ -13,7 +13,7 @@ You can subscribe new watched repository's releases every day 00:00.
 1. Get [your watching repositories](https://github.com/watching) without private and your repository
 2. Create `https://github.com/<owner>/<repo>/releases.atom` from the 1 result.
 3. Filter repositories by `EXCLUDE_PATTERNS`
-3. Subscribe these rss if you do not subscribe it yet.
+4. Subscribe these rss if you do not subscribe it yet.
 
 This job run every day at 00:00 By default.
 
