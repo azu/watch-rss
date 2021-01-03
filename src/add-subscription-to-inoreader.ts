@@ -49,6 +49,7 @@ const createInoreaderAPI = async (accessToken: AccessToken) => {
             t: `[${owner}/${repo}] release notes`,
             a: "user/-/label/" + folder
         });
+        // post body does not work…
         await fetch(`https://www.inoreader.com/reader/api/0/subscription/edit?${editParam}`, {
             method: "POST",
             headers: {
@@ -73,7 +74,7 @@ const createInoreaderAPI = async (accessToken: AccessToken) => {
  *  GITHUB_REPOSITORY=azu/watch-rss
  *
  * ENV(optional):
- *  EXCLUDE_PATTERNS="ignore-owner/,ignore-word" # ignore patterns that are comma separated
+ *  EXCLUDE_PATTERNS="ignore-owner/,ignore-org/" # ignore patterns that are comma separated
  *  INOREADER_FOLDER_NAME=folder name
  *  DEBUG=1
  */
