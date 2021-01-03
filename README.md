@@ -35,7 +35,7 @@ This repository is template repository. You need to create your repository for y
 - `$GITHUB_TOKEN` is your personal access token that you got it at 1
 - `<your-username>/watch-rss` is your forked repository name
 
-```markdown
+```
 yarn install
 GITHUB_REPOSITORY=<your-username>/watch-rss GITHUB_TOKEN=$GITHUB_TOKEN npm getAccessToken
 ```
