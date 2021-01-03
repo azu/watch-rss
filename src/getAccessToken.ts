@@ -7,8 +7,8 @@ import open from "open";
 import readline from "readline";
 import { Octokit } from "@octokit/rest";
 import sodium from "tweetsodium";
-// @ts-ignore
-import nacl from "tweetnacl";
+
+export const SECRET_KEY_NAME = "INOREADER_TOKEN_JSON";
 
 function askQuestion(query: string): Promise<string> {
     const rl = readline.createInterface({
@@ -24,41 +24,55 @@ function askQuestion(query: string): Promise<string> {
     );
 }
 
+export const updateSecret = async ({
+    owner,
+    repo,
+    value,
+    GITHUB_TOKEN
+}: {
+    owner: string;
+    repo: string;
+    value: string;
+    GITHUB_TOKEN: string;
+}) => {
+    const octokit = new Octokit({
+        auth: GITHUB_TOKEN!
+    });
+    const publicKey = await octokit.actions.getRepoPublicKey({
+        owner,
+        repo
+    });
+    const message = value;
+    const textEncoder = new TextEncoder();
+    const encryptedBytes = sodium.seal(textEncoder.encode(message), Buffer.from(publicKey.data.key, "base64"));
+    const encrypted = Buffer.from(encryptedBytes).toString("base64");
+    console.log("encrypted", encrypted);
+    return octokit.actions.createOrUpdateRepoSecret({
+        owner: owner,
+        repo: repo,
+        secret_name: SECRET_KEY_NAME,
+        encrypted_value: encrypted,
+        key_id: publicKey.data.key_id
+    });
+};
 // https://github.com/maximilianMairinger/ctp/blob/95dbb0237c02169aa92edd4ad765204a4a44be11/src/app/project/app/app.ts
 // get repository public key →　update secrets
-async function run() {
-    const octokit = new Octokit({
-        auth: process.env.GITHUB_TOKEN!
-    });
+async function getAccessToken() {
+    const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+    if (!GITHUB_TOKEN) {
+        throw new Error("require GITHUB_TOKEN env");
+    }
     const GITHUB_REPOSITORY = process.env.GITHUB_REPOSITORY;
     if (!GITHUB_REPOSITORY) {
         throw new Error("require GITHUB_REPOSITORY env");
     }
     const [owner, repo] = GITHUB_REPOSITORY.split("/");
-    const publicKey = await octokit.actions.getRepoPublicKey({
-        owner,
-        repo
-    });
-    const message = "xxx";
-    const textEncoder = new TextEncoder();
-    const encryptedBytes = sodium.seal(textEncoder.encode(message), Buffer.from(publicKey.data.key, "base64"));
-    const encrypted = Buffer.from(encryptedBytes).toString("base64");
-    console.log("encrypted", encrypted);
-    await octokit.actions.createOrUpdateRepoSecret({
-        owner: "azu",
-        repo: "watch-rss",
-        secret_name: "INOREADER_TOKENS",
-        encrypted_value: encrypted,
-        key_id: publicKey.data.key_id
-    });
-    return;
     const client = new AuthorizationCode(OAuthConfig);
     const authorizationUri = client.authorizeURL({
         redirect_uri: "http://localhost:3000/callback",
         scope: "read write",
         state: "ok_it_state"
     });
-
     await open(authorizationUri);
     const code = await askQuestion("Input your code(?code=): ");
     const tokenParams = {
@@ -68,8 +82,13 @@ async function run() {
     };
 
     try {
-        const accessToken = await client.getToken(tokenParams);
-        console.log("Copy");
+        const tokenJSON = await client.getToken(tokenParams);
+        await updateSecret({
+            owner,
+            repo,
+            value: JSON.stringify(tokenJSON),
+            GITHUB_TOKEN: GITHUB_TOKEN
+        });
         /**
          *
          {
@@ -84,10 +103,16 @@ async function run() {
 }
 
          */
-        console.log(JSON.stringify(accessToken));
+        console.log(`Save token to secrets.${SECRET_KEY_NAME}`);
+        console.log(JSON.stringify(tokenJSON));
     } catch (error) {
         console.log("Access Token Error", error.message);
     }
 }
 
-run();
+if (require.main === module) {
+    getAccessToken().catch((error) => {
+        console.error(error);
+        process.exit(1);
+    });
+}

@@ -32,6 +32,7 @@
     "module"
   ],
   "scripts": {
+    "add-subscription-to-inoreader": "ts-node src/add-subscription-to-inoreader.ts",
     "getAccessToken": "ts-node src/getAccessToken.ts",
     "build": "tsc -p . && tsc -p ./tsconfig.module.json",
     "clean": "rimraf lib/ module/",
@@ -55,6 +56,7 @@
   "devDependencies": {
     "@types/mocha": "^8.2.0",
     "@types/node": "^14.14.19",
+    "@types/node-fetch": "^2.5.7",
     "lint-staged": "^10.5.3",
     "mocha": "^8.2.1",
     "prettier": "^2.2.1",
@@ -67,8 +69,10 @@
     "@octokit/rest": "^18.0.12",
     "@types/simple-oauth2": "^4.1.0",
     "atob": "^2.1.2",
+    "node-fetch": "^2.6.1",
     "open": "^7.3.0",
-    "rss-combiner": "^0.0.5",
-    "simple-oauth2": "^4.2.0"
+    "p-all": "^3.0.0",
+    "simple-oauth2": "^4.2.0",
+    "tweetsodium": "^0.0.5"
   }
 }
