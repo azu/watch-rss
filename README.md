@@ -44,7 +44,7 @@ GITHUB_REPOSITORY=<your-username>/watch-rss GITHUB_TOKEN=$GITHUB_TOKEN npm getAc
 
 3. Set access tokens GitHub Action's secrets.
 
-You need to create `PERSONAL_GITHUB_TOKEN` and set 1's access token value.
+You need to create `PERSONAL_GITHUB_TOKEN` and fill it your GitHub personal access token.
 
 - `https://github.com/<yourname>/watch-rss/settings/secrets/actions`
 
