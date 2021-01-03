@@ -14,9 +14,6 @@ const debug = (...args: any[]) => {
     console.log("[watch-rss]", ...args);
 };
 const info = (...args: any[]) => {
-    if (!DEBUG) {
-        return;
-    }
     console.info("[watch-rss]", ...args);
 };
 const createInoreaderAPI = async (accessToken: AccessToken) => {
