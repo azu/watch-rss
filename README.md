@@ -16,7 +16,7 @@ You can subscribe new watched repository's releases every day 00:00.
 
 This job run every day at 00:00 By default.
 
-For more details, See [schedule-subscribe.yml](.github/workflows/schedule-subscribe.yml).
+For more details, See [schedule-subscribe.yml](.github/workflows/scheduled-subscribe.yml).
 
 ## Usage
 

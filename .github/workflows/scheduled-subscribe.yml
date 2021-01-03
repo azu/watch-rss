@@ -1,4 +1,4 @@
-name: Schedule Subscribe
+name: Scheduled Subscribe
 on:
   push:
     branches:
