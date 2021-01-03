@@ -109,6 +109,7 @@ async function run() {
         }
     }
     // GitHub
+    log("fetch watching...");
     const releaseFeedList = await fetchAllWatching({
         ENABLE_CACHE: Boolean(process.env.ENABLE_CACHE), // IT IS LOCAL OPTION
         GITHUB_TOKEN: GITHUB_TOKEN
@@ -116,12 +117,18 @@ async function run() {
     const inoreaderClient = await createInoreaderAPI(accessToken);
     const actions = releaseFeedList
         .filter((releaseNoteFeedURL) => {
-            return excludePatterns.some((excludePattern) => {
+            const skipped = excludePatterns.some((excludePattern) => {
                 return releaseNoteFeedURL.includes(excludePattern);
             });
+            if (skipped) {
+                log("Skip: ", releaseNoteFeedURL);
+            } else {
+                log("ok: ", releaseNoteFeedURL);
+            }
+            return skipped;
         })
         .map((releaseNoteFeedURL) => {
-            return () => {
+            return async () => {
                 return inoreaderClient.addSubscription(releaseNoteFeedURL, FOLDER_NAME);
             };
         });

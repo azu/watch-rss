@@ -33,7 +33,7 @@ export const fetchAllWatching = async (options: fetchAllWatchingOptions): Promis
     const repositories = await octokit.paginate(octokit.activity.listWatchedReposForAuthenticatedUser);
     return repositories
         .filter((repo) => {
-            return repo.owner?.login !== myUserName && !repo.private;
+            return !repo.private && repo.owner?.login !== myUserName;
         })
         .map((repo) => {
             return repo.html_url + "/releases.atom";

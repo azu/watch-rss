@@ -58,8 +58,11 @@ PERSONAL_GITHUB_TOKEN=Personal Access Token of GitHub(1)
 
 RUN following command after create token using `npm run getAccessToken`. 
 
+- `ENABLE_CACHE=1` store cache to `.cache/`
+- `DEBUG=1` dump debug log
+
 ```
-DEBUG=1 INOREADER_TOKEN_JSON=$(cat .cache/inoreader_token.json) GITHUB_REPOSITORY="azu/watch-rss" GITHUB_TOKEN="$GITHUB_TOKEN" npm run add-subscription-to-inoreader
+DEBUG=1 ENABLE_CACHE=1 INOREADER_TOKEN_JSON=$(cat .cache/inoreader_token.json) GITHUB_REPOSITORY="azu/watch-rss" GITHUB_TOKEN="$GITHUB_TOKEN" npm run add-subscription-to-inoreader
 ```
 
 ## Changelog

@@ -34,6 +34,7 @@
   "scripts": {
     "add-subscription-to-inoreader": "ts-node src/add-subscription-to-inoreader.ts",
     "getAccessToken": "ts-node src/getAccessToken.ts",
+    "watch-rss": "ts-node src/watch-rss.ts",
     "build": "tsc -p . && tsc -p ./tsconfig.module.json",
     "clean": "rimraf lib/ module/",
     "prepare": "git config --local core.hooksPath .githook",
