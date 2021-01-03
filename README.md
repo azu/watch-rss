@@ -38,7 +38,7 @@ This repository is template repository. You need to create your repository for y
 GITHUB_REPOSITORY=<your-username>/watch-rss GITHUB_TOKEN=$GITHUB_TOKEN npm start
 ```
 
-:memo: This script add `INOREADER_TOKEN_JSON` to your repository(`<owner>/watch-rss`).
+:memo: This script add `INOREADER_TOKEN_JSON` to your repository(`<owner>/watch-rss`)'s secrets.
 
 3. Set access tokens GitHub Action's secrets.
 
