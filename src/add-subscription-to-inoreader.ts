@@ -124,7 +124,7 @@ async function run() {
         ENABLE_CACHE: Boolean(process.env.ENABLE_CACHE), // IT IS LOCAL OPTION
         GITHUB_TOKEN: GITHUB_TOKEN
     });
-    info(`feted feed count: ${releaseFeedList.length}`);
+    info(`fetched feed count: ${releaseFeedList.length}`);
     const inoreaderClient = await createInoreaderAPI(accessToken);
     const resultCount = {
         skipped: 0,
@@ -154,7 +154,7 @@ async function run() {
                 });
             };
         });
-    info(`Target feed count: ${actions.length}`);
+    info(`Filtered feed count: ${actions.length}`);
     await pAll(actions, {
         concurrency: 8,
         stopOnError: false
