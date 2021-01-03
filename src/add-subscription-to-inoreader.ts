@@ -27,16 +27,20 @@ const createInoreaderAPI = async (accessToken: AccessToken) => {
     const subscriptions = await fetchSubscriptions();
     const subscriptionFeedURLSet = new Set(subscriptions.subscriptions.map((subscription) => subscription.url));
     debug("Subscription size", subscriptionFeedURLSet.size);
-    const addSubscription = async (url: string, folder: string) => {
+    const addSubscription = async (url: string, folder: string): Promise<{ status: "skip" | "ok" }> => {
         if (subscriptionFeedURLSet.has(url)) {
             debug("Already subscribe: " + url);
-            return;
+            return {
+                status: "skip"
+            };
         }
         // https://www.inoreader.com/developers/add-subscription
         // Edit is adding and editing folder
         const match = url.match(/https:\/\/github.com\/(.*?)\/(.*)\/releases.atom/);
         if (!match) {
-            return;
+            return {
+                status: "skip"
+            };
         }
         const [, owner, repo] = match;
         const editParam = stringify({
@@ -53,6 +57,9 @@ const createInoreaderAPI = async (accessToken: AccessToken) => {
             }
         }).then((res) => res.text());
         debug("Subscribe: " + url);
+        return {
+            status: "ok"
+        };
     };
     return {
         addSubscription: addSubscription
@@ -119,6 +126,10 @@ async function run() {
     });
     info(`feted feed count: ${releaseFeedList.length}`);
     const inoreaderClient = await createInoreaderAPI(accessToken);
+    const resultCount = {
+        skipped: 0,
+        subscribed: 0
+    };
     const actions = releaseFeedList
         .filter((releaseNoteFeedURL) => {
             const skipped = excludePatterns.some((excludePattern) => {
@@ -126,22 +137,31 @@ async function run() {
             });
             if (skipped) {
                 debug("Skip: ", releaseNoteFeedURL);
+                return false;
             } else {
-                debug("ok: ", releaseNoteFeedURL);
+                debug("Want to subscribe: ", releaseNoteFeedURL);
+                return true;
             }
-            return skipped;
         })
         .map((releaseNoteFeedURL) => {
             return async () => {
-                return inoreaderClient.addSubscription(releaseNoteFeedURL, FOLDER_NAME);
+                return inoreaderClient.addSubscription(releaseNoteFeedURL, FOLDER_NAME).then((status) => {
+                    if (status.status === "ok") {
+                        resultCount.subscribed++;
+                    } else if (status.status === "skip") {
+                        resultCount.skipped++;
+                    }
+                });
             };
         });
-    info(`To subscribe feed count: ${actions.length}`);
+    info(`Target feed count: ${actions.length}`);
     await pAll(actions, {
         concurrency: 8,
         stopOnError: false
     });
-    info("Completed");
+    info("Completed!");
+    info("Skipped: " + resultCount.skipped);
+    info("Subscribed: " + resultCount.subscribed);
 }
 
 if (require.main === module) {
