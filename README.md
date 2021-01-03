@@ -26,7 +26,7 @@ This repository is template repository. You need to create your repository for y
 1. Get GitHub Personal Access Token of GitHub
 
 - Visit <https://github.com/settings/tokens/new>
-- Create a token with `repo`,`workflow`,`public_key`,`user` permissions
+- Create a token with `repo`,`workflow`,`user` permissions
 - Copy it!
 
 2. Get access token of [Inoreader](https://inoreader.com)
