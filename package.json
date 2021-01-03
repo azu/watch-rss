@@ -66,9 +66,9 @@
   "dependencies": {
     "@octokit/rest": "^18.0.12",
     "@types/simple-oauth2": "^4.1.0",
+    "atob": "^2.1.2",
     "open": "^7.3.0",
     "rss-combiner": "^0.0.5",
-    "simple-oauth2": "^4.2.0",
-    "tweetsodium": "^0.0.5"
+    "simple-oauth2": "^4.2.0"
   }
 }
