@@ -1,5 +1,7 @@
 # watch-rss
 
+> Subscribe https://github.com/watching as RSS Feeds
+
 Subscribe your watched GitHub repository's releases as RSS on [Inoreader](https://inoreader.com).
 
 This repository use GitHub Actions as scheduled cron.
@@ -10,7 +12,7 @@ You can subscribe new watched repository's releases every day 00:00.
 
 1. Get your watches repositories without private and your repository
 2. Create `https://github.com/<owner>/<repo>/releases.atom` from 1
-3. Subscribe these rss if you do not subscribe it yet. 
+3. Subscribe these rss if you do not subscribe it yet.
 
 This job run every day at 00:00 By default.
 
@@ -18,6 +20,9 @@ For more details, See [schedule-subscribe.yml](.github/workflows/schedule-subscr
 
 ## Usage
 
+This repository is template repository. You need to create your repository for yours.
+
+0. Create your repository from ["Use this Template"](https://github.com/azu/watch-rss/generate)
 1. Get GitHub Personal Access Token of GitHub
 
 - Visit <https://github.com/settings/tokens/new>
@@ -26,8 +31,11 @@ For more details, See [schedule-subscribe.yml](.github/workflows/schedule-subscr
 
 2. Get access token of [Inoreader](https://inoreader.com)
 
+- `$GITHUB_TOKEN` is your personal access token that you got it at 1
+- `<your-username>/watch-rss` is your forked repository name
+
 ```markdown
-GITHUB_REPOSITORY=<owner>/watch-rss GITHUB_TOKEN=$GITHUB_TOKEN npm start
+GITHUB_REPOSITORY=<your-username>/watch-rss GITHUB_TOKEN=$GITHUB_TOKEN npm start
 ```
 
 :memo: This script add `INOREADER_TOKEN_JSON` to your repository(`<owner>/watch-rss`).
@@ -56,7 +64,7 @@ PERSONAL_GITHUB_TOKEN=Personal Access Token of GitHub(1)
 
 ## Debug
 
-RUN following command after create token using `npm run getAccessToken`. 
+RUN following command after create token using `npm run getAccessToken`.
 
 - `ENABLE_CACHE=1` store cache to `.cache/`
 - `DEBUG=1` dump debug log
