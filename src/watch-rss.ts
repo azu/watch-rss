@@ -1,6 +1,8 @@
 import { Octokit } from "@octokit/rest";
 // @ts-ignore
 import RSSCombiner from "rss-combiner";
+import * as fs from "fs";
+import path from "path";
 
 export type fetchAllWatchingOptions = {
     GITHUB_TOKEN: string;
@@ -45,18 +47,9 @@ if (require.main === module) {
             ENABLE_CACHE: Boolean(process.env.ENABLE_CACHE)
         });
         console.log(rssList);
-        // const feedConfig = createFeedConfig({
-        //     title: "@azu watching",
-        //     size: 100,
-        //     rssList
-        // });
-        // console.log("feedConfig", feedConfig);
-        // // やっぱりリクエストを投げすぎる…
-        // RSSCombiner(feedConfig).then(function(combinedFeed: any) {
-        //     const xml = combinedFeed.xml();
-        //     console.log(xml);
-        // }).catch((error: Error) => {
-        //     console.error(error);
-        // });
+        fs.mkdirSync(path.join(__dirname, "../.cache/"), {
+            recursive: true
+        });
+        fs.writeFileSync(path.join(__dirname, "../.cache/rss.json"), JSON.stringify(rssList), "utf-8");
     })();
 }
