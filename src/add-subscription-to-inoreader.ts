@@ -63,7 +63,7 @@ const createInoreaderAPI = async (accessToken: AccessToken) => {
 async function run() {
     const FOLDER_NAME = process.env.INOREADER_FOLDER_NAME ?? "GitHubReleases";
     if (!FOLDER_NAME) {
-        throw new Error("require FOLDER_NAME env");
+        throw new Error("require INOREADER_FOLDER_NAME env");
     }
     const INOREADER_TOKEN_JSON = process.env.INOREADER_TOKEN_JSON;
     if (!INOREADER_TOKEN_JSON) {
