@@ -22,9 +22,17 @@ const createInoreaderAPI = async (accessToken: AccessToken) => {
             headers: {
                 Authorization: `Bearer ${accessToken.token.access_token}`
             }
-        }).then((res) => res.json());
+        }).then((res) => {
+            if (res.ok) {
+                return res.json();
+            }
+            throw new Error(res.statusText);
+        });
     };
     const subscriptions = await fetchSubscriptions();
+    if (!subscriptions.subscriptions) {
+        throw new Error("Fail to fetchSubscriptions");
+    }
     const subscriptionFeedURLSet = new Set(subscriptions.subscriptions.map((subscription) => subscription.url));
     debug("Subscription size", subscriptionFeedURLSet.size);
     const addSubscription = async (url: string, folder: string): Promise<{ status: "skip" | "ok" }> => {
