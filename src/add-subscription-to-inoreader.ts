@@ -114,6 +114,7 @@ async function run() {
     if (accessToken.expired()) {
         try {
             const refreshParams = {
+                redirect_uri: "http://localhost:3000/callback",
                 scope: "read write"
             };
             accessToken = await accessToken.refresh(refreshParams);
@@ -125,6 +126,7 @@ async function run() {
             });
         } catch (error) {
             console.error("Error refreshing access token: ", error.message);
+            throw error;
         }
     }
     // GitHub
