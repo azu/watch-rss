@@ -46,7 +46,6 @@ export const updateSecret = async ({
     const textEncoder = new TextEncoder();
     const encryptedBytes = sodium.seal(textEncoder.encode(message), Buffer.from(publicKey.data.key, "base64"));
     const encrypted = Buffer.from(encryptedBytes).toString("base64");
-    console.log("encrypted", encrypted);
     return octokit.actions.createOrUpdateRepoSecret({
         owner: owner,
         repo: repo,
