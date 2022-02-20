@@ -31,6 +31,7 @@ export const fetchAllWatching = async (options: fetchAllWatchingOptions): Promis
     const user = await octokit.users.getAuthenticated();
     const myUserName = user.data.login;
     const repositories = await octokit.paginate(octokit.activity.listWatchedReposForAuthenticatedUser);
+    console.info(`[watch-rss] all watching repo count: ${repositories.length}`);
     return repositories
         .filter((repo) => {
             return !repo.private && repo.owner?.login !== myUserName;
