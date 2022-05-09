@@ -23,7 +23,7 @@ jobs:
         run: yarn install
       - name: Subscribe
         run: |
-          npm run add-subscription-to-inoreader
+          for _ in 1 2; do npm run add-subscription-to-inoreader && break; done
         env:
           INOREADER_TOKEN_JSON: ${{ secrets.INOREADER_TOKEN_JSON }}
           GITHUB_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
