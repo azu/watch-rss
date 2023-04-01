@@ -92,9 +92,11 @@ async function run() {
         throw new Error("require INOREADER_FOLDER_NAME env");
     }
     const EXCLUDE_PATTERNS = process.env.EXCLUDE_PATTERNS ?? "";
-    const excludePatterns = EXCLUDE_PATTERNS.split(",").map((exclude) => {
-        return exclude.trim();
-    });
+    const excludePatterns = EXCLUDE_PATTERNS.split(",")
+        .map((exclude) => {
+            return exclude.trim();
+        })
+        .filter(Boolean);
     const INOREADER_TOKEN_JSON = process.env.INOREADER_TOKEN_JSON;
     if (!INOREADER_TOKEN_JSON) {
         throw new Error("require INOREADER_TOKEN_JSON env");
